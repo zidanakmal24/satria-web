@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SATRIA - Sistem Klasifikasi Kualitas Air Ikan Nila</title> 
+
+  <style>
+    /* =========================================
+       1. Global Reset & Typography
+       ========================================= */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      min-height: 100vh;
+    }
+
+    /* =========================================
+       2. Navigation Bar (Sticky)
+       ========================================= */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #111827;
+      border-bottom: 1px solid #1f2937;
+      padding: 18px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2563eb, #06b6d4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 10px rgba(59,130,246, 0.4); }
+      50% { box-shadow: 0 0 25px rgba(59,130,246, 0.9); }
+      100% { box-shadow: 0 0 10px rgba(59,130,246, 0.4); }
+    }
+
+    .subtitle {
+      color: #60a5fa;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .nrp {
+      background: #0f172a;
+      border: 1px solid #334155;
+      padding: 10px 18px;
+      border-radius: 999px;
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    /* =========================================
+       3. Main Layout Grid
+       ========================================= */
+    .container {
+      max-width: 1400px;
+      margin: auto;
+      padding: 30px;
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 25px;
+    }
+
+    .card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 18px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0, 0.3);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 12px;
+      font-size: 20px;
+    }
+
+    /* =========================================
+       4. Forms (Inputs & Buttons)
+       ========================================= */
+    label {
+      display: block;
+      margin-bottom: 8px;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: white;
+      font-size: 15px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 6px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 30px;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2563eb, #06b6d4);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 15px;
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      opacity: 0.95;
+    }
+
+    /* =========================================
+       5. Status Dashboard Indicators
+       ========================================= */
+    .status-card {
+      padding: 30px;
+      border-radius: 18px;
+      text-align: center;
+      margin-bottom: 20px;
+      transition: 0.3s;
+    }
+
+    .optimal { background: #052e16; border: 1px solid #10b981; }
+    .warning { background: #451a03; border: 1px solid #f59e0b; }
+    .danger { background: #4c0519; border: 1px solid #f43f5e; }
+
+    .status-title {
+      font-size: 38px;
+      font-weight: bold;
+      margin: 15px 0;
+    }
+
+    .optimal-text { color: #34d399; }
+    .warning-text { color: #fbbf24; }
+    .danger-text { color: #fb7185; }
+
+    /* =========================================
+       6. Info Metrics Box
+       ========================================= */
+    .metrics {
+      background: #0f172a;
+      padding: 20px;
+      border-radius: 15px;
+      border: 1px solid #1e293b;
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #1e293b;
+      font-size: 14px;
+    }
+
+    /* =========================================
+       7. Table Data / Audit Log
+       ========================================= */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th {
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 14px;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    td {
+      padding: 14px;
+      border-top: 1px solid #1e293b;
+      font-size: 13px;
+    }
+
+    tr:hover {
+      background: #1e293b;
+    }
+
+    /* =========================================
+       8. Badges Status
+       ========================================= */
+    .badge {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: bold;
+      display: inline-block;
+    }
+
+    .badge-optimal { background: #064e3b; color: #34d399; }
+    .badge-warning { background: #78350f; color: #fbbf24; }
+    .badge-danger { background: #881337; color: #fb7185; }
+
+    /* =========================================
+       9. Footer & Responsive Media Query
+       ========================================= */
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #94a3b8;
+      border-top: 1px solid #1e293b;
+      margin-top: 30px;
+      font-size: 13px;
+    }
+
+    @media(max-width: 900px) {
+      .container { grid-template-columns: 1fr; }
+      nav { flex-direction: column; gap: 15px; }
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <div class="logo-area">
+      <div class="logo">S</div>
+      <div>
+        <h1>Project SATRIA</h1>
+        <p class="subtitle">Water Quality Classification System</p>
+      </div>
+    </div>
+    <div class="nrp">
+      NRP: <b>3324600007</b>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="card">
+      <h2>Input Parameter Air Nila</h2>
+      <p style="color:#94a3b8; font-size:14px; line-height:1.7;">
+        Masukkan parameter kualitas air kolam budidaya ikan nila untuk proses klasifikasi otomatis.
+      </p>
+      
+      <label>pH Air</label>
+      <input type="number" id="input-ph" value="7.2" step="0.1">
+      <p class="hint">Nilai ideal: 6.5 - 8.5</p>
+      
+      <label>Suhu Kolam (°C)</label>
+      <input type="number" id="input-suhu" value="28" step="0.1">
+      <p class="hint">Nilai ideal: 25°C - 32°C</p>
+      
+      <label>DO / Oksigen Terlarut</label>
+      <input type="number" id="input-do" value="5.5" step="0.1">
+      <p class="hint">Minimum aman: > 4.0 mg/L</p>
+      
+      <label>Turbiditas</label>
+      <input type="number" id="input-turbiditas" value="35">
+      <p class="hint">Toleransi: 25 - 45 NTU</p>
+      
+      <button onclick="prosesKlasifikasiSatria()">
+        Jalankan Klasifikasi Air
+      </button>
+    </section>
+
+    <section>
+      <div class="card">
+        <h2>Hasil Inferensi Model</h2>
+        
+        <div id="card-status" class="status-card optimal">
+          <p>Status Kualitas Air</p>
+          <div id="label-status" class="status-title optimal-text">
+            OPTIMAL
+          </div>
+          <p id="label-deskripsi">
+            Seluruh parameter berada dalam batas aman budidaya ikan nila.
+          </p>
+        </div>
+        
+        <div class="metrics">
+          <div class="metric-row">
+            <span>Algoritma</span>
+            <span>Random Forest Logic</span>
+          </div>
+          <div class="metric-row">
+            <span>Runtime</span>
+            <span>< 0.01 ms</span>
+          </div>
+          <div class="metric-row">
+            <span>Komoditas</span>
+            <span>Oreochromis niloticus</span>
+          </div>
+          <div class="metric-row">
+            <span>Environment</span>
+            <span>Vercel Production</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:25px;">
+        <h2>Riwayat Audit Log Sensor</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Waktu</th>
+              <th>pH</th>
+              <th>Suhu</th>
+              <th>DO</th>
+              <th>Turbiditas</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="tabel-log-body">
+            <tr>
+              <td>Hari ini</td>
+              <td>7.2</td>
+              <td>28°C</td>
+              <td>5.5</td>
+              <td>35</td>
+              <td>
+                <span class="badge badge-optimal">OPTIMAL</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 Project SATRIA PENS</p>
+    <p>Sovia Wahyuningtyas • D4 Applied Data Science</p>
+  </footer>
+
+  <script>
+    function prosesKlasifikasiSatria() {
+      // 1. Ambil Data Input dari DOM [cite: 53, 54]
+      const ph = parseFloat(document.getElementById('input-ph').value);
+      const suhu = parseFloat(document.getElementById('input-suhu').value);
+      const doValue = parseFloat(document.getElementById('input-do').value);
+      const turbiditas = parseFloat(document.getElementById('input-turbiditas').value);
+
+      // 2. Inisialisasi Status Default [cite: 55]
+      let status = "OPTIMAL";
+      let deskripsi = "Seluruh parameter berada dalam kondisi optimal.";
+
+      // 3. Evaluasi Logika Kritis (Bahaya) [cite: 56, 57]
+      if (
+        ph < 6.5 || ph > 8.5 ||
+        suhu < 25 || suhu > 32 ||
+        doValue < 4 ||
+        turbiditas < 25 || turbiditas > 45
+      ) {
+        status = "BAHAYA";
+        deskripsi = "Terdapat parameter kritis yang berbahaya bagi ikan nila.";
+      } 
+      // 4. Evaluasi Logika Marjinal (Waspada) [cite: 58, 59]
+      else if (
+        (ph >= 6.5 && ph <= 6.8) ||
+        (suhu >= 25 && suhu <= 26.5) ||
+        (doValue >= 4 && doValue <= 4.8)
+      ) {
+        status = "WASPADA";
+        deskripsi = "Kondisi air berada dalam batas toleransi marjinal.";
+      }
+
+      // 5. Update UI DOM Status [cite: 60]
+      const card = document.getElementById("card-status");
+      const label = document.getElementById("label-status");
+      const desc = document.getElementById("label-deskripsi");
+
+      label.innerText = status;
+      desc.innerText = deskripsi;
+
+      // Reset Kelas UI [cite: 60, 61]
+      card.className = "status-card";
+      label.className = "status-title";
+      let badgeClass = "";
+
+      // Pasang Kelas Baru Sesuai Status [cite: 62, 63, 64, 65]
+      if (status === "OPTIMAL") {
+        card.classList.add("optimal");
+        label.classList.add("optimal-text");
+        badgeClass = "badge-optimal";
+      } else if (status === "WASPADA") {
+        card.classList.add("warning");
+        label.classList.add("warning-text");
+        badgeClass = "badge-warning";
+      } else {
+        card.classList.add("danger");
+        label.classList.add("danger-text");
+        badgeClass = "badge-danger";
+      }
+
+      // 6. Update UI DOM Tabel Log (Append Node) [cite: 65, 66]
+      const tbody = document.getElementById("tabel-log-body");
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${new Date().toLocaleTimeString()}</td>
+        <td>${ph}</td>
+        <td>${suhu}°C</td>
+        <td>${doValue}</td>
+        <td>${turbiditas}</td>
+        <td>
+          <span class="badge ${badgeClass}">
+            ${status}
+          </span>
+        </td>
+      `;
+
+      tbody.insertBefore(row, tbody.firstChild); [cite: 67]
+
+      // Batasi hanya 10 riwayat log terakhir [cite: 68, 69]
+      if (tbody.children.length > 10) {
+        tbody.removeChild(tbody.lastChild);
+      }
+    }
+  </script>
+</body>
+</html>
